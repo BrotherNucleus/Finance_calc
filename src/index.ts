@@ -1,9 +1,12 @@
 import {
-  calculateProductFinance,
   saveAsExcel,
   saveAsPdf,
-  createFirm,
 } from "./Serialization";
+
+import {
+  createFirm,
+  calculateProductFinance
+} from "./types"
 
 async function main() {
 
