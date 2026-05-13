@@ -134,97 +134,140 @@ export async function saveAsExcel(
       header: "Production Cost",
       key: "productionCost",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Packaging Cost",
       key: "packagingCost",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Shipping Cost",
       key: "shippingCost",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Marketing Cost",
       key: "marketingCost",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Total Cost / Unit",
       key: "totalCostPerUnit",
       width: 20,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Selling Price",
       key: "sellingPrice",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Profit / Unit",
       key: "profitPerUnit",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Profit Margin %",
       key: "profitMargin",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Monthly Sales",
       key: "expectedMonthlySales",
       width: 18,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Monthly Revenue",
       key: "expectedMonthlyRevenue",
       width: 20,
+      style: {
+        numFmt: '0.00'
+      }
     },
     {
       header: "Monthly Profit",
       key: "expectedMonthlyProfit",
       width: 20,
+      style: {
+        numFmt: '0.00'
+      }
     },
   ];
+
+
+
   data.forEach((firm: Firm) => {
     firm.products.forEach((product: Product) => {
-      worksheet.addRow({
-        firmName: firm.firmName,
+      const r= worksheet.rowCount + 1;
 
-        productName: product.productName,
+      worksheet.addRow({
+        firmName: firm.firmName, //A
+
+        productName: product.productName, //B
 
         productionCost:
-          product.productionCost.toFixed(2),
+          product.productionCost, //C
 
         packagingCost:
-          product.packagingCost.toFixed(2),
+          product.packagingCost, //D
 
         shippingCost:
-          product.shippingCost.toFixed(2),
+          product.shippingCost, //E
 
         marketingCost:
-          product.marketingCost.toFixed(2),
+          product.marketingCost, //F
 
-        totalCostPerUnit:
-          product.totalCostPerUnit.toFixed(2),
+        totalCostPerUnit: {
+          formula: `C${r}+D${r}+E${r}+F${r}`, //G
+        },
+          
 
         sellingPrice:
-          product.sellingPrice.toFixed(2),
+          product.sellingPrice, //H
 
-        profitPerUnit:
-          product.profitPerUnit.toFixed(2),
+        profitPerUnit:{
+          formula: `H${r}-G${r}`, //I
+        },
 
-        profitMargin:
-          product.profitMargin.toFixed(2),
+        profitMargin: {
+          formula: `I${r}/H${r}*100`, //J
+        },
 
         expectedMonthlySales:
-          product.expectedMonthlySales,
+          product.expectedMonthlySales, //K
 
-        expectedMonthlyRevenue:
-          product.expectedMonthlyRevenue.toFixed(2),
-
-        expectedMonthlyProfit:
-          product.expectedMonthlyProfit.toFixed(2),
+        expectedMonthlyRevenue: {
+          formula: `H${r}*K${r}`, //L
+        },
+        expectedMonthlyProfit: {
+          formula: `I${r}*K${r}`, //M
+        },
      });
     });
   });
