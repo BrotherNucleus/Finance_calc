@@ -2,6 +2,7 @@ import {
   calculateProductFinance,
   saveAsExcel,
   saveAsPdf,
+  createFirm,
 } from "./Serialization";
 
 async function main() {
@@ -39,9 +40,13 @@ async function main() {
     ),
   ];
 
-  await saveAsExcel(report);
+  const firms = [
+    createFirm("Something INC", report)
+  ]
 
-  await saveAsPdf(report);
+  await saveAsExcel(firms);
+
+  await saveAsPdf(firms);
 
   console.log("Business finance reports generated.");
 }

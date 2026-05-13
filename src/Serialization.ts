@@ -3,10 +3,15 @@ import path from "path";
 import ExcelJS from "exceljs";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 
+export type Firm = {
+  firmName: string;
+  products: Product[];
+}
+
 // --------------------
 // BUSINESS FINANCE TYPE
 // --------------------
-export type ProductFinance = {
+export type Product = {
   productName: string;
 
   productionCost: number;
@@ -26,6 +31,15 @@ export type ProductFinance = {
   expectedMonthlyRevenue: number;
   expectedMonthlyProfit: number;
 };
+
+export function createFirm(
+  firmName: string,
+  products: Product[]) : Firm {
+    return {
+      firmName,
+      products,
+    };
+  }
 
 // --------------------
 // ENSURE OUTPUT FOLDER
@@ -51,7 +65,7 @@ export function calculateProductFinance(
   marketingCost: number,
   sellingPrice: number,
   expectedMonthlySales: number
-): ProductFinance {
+): Product {
 
   const totalCostPerUnit =
     productionCost +
@@ -97,7 +111,7 @@ export function calculateProductFinance(
 // EXCEL EXPORT
 // --------------------
 export async function saveAsExcel(
-  data: ProductFinance[]
+  data: Firm[]
 ) {
 
   const workbook = new ExcelJS.Workbook();
@@ -106,6 +120,11 @@ export async function saveAsExcel(
     workbook.addWorksheet("Business Finance");
 
   worksheet.columns = [
+    {
+      header: "Firm",
+      key: "firmName",
+      width: 25,
+    },
     {
       header: "Product",
       key: "productName",
@@ -167,44 +186,46 @@ export async function saveAsExcel(
       width: 20,
     },
   ];
+  data.forEach((firm: Firm) => {
+    firm.products.forEach((product: Product) => {
+      worksheet.addRow({
+        firmName: firm.firmName,
 
-  data.forEach((product) => {
+        productName: product.productName,
 
-    worksheet.addRow({
-      productName: product.productName,
+        productionCost:
+          product.productionCost.toFixed(2),
 
-      productionCost:
-        product.productionCost.toFixed(2),
+        packagingCost:
+          product.packagingCost.toFixed(2),
 
-      packagingCost:
-        product.packagingCost.toFixed(2),
+        shippingCost:
+          product.shippingCost.toFixed(2),
 
-      shippingCost:
-        product.shippingCost.toFixed(2),
+        marketingCost:
+          product.marketingCost.toFixed(2),
 
-      marketingCost:
-        product.marketingCost.toFixed(2),
+        totalCostPerUnit:
+          product.totalCostPerUnit.toFixed(2),
 
-      totalCostPerUnit:
-        product.totalCostPerUnit.toFixed(2),
+        sellingPrice:
+          product.sellingPrice.toFixed(2),
 
-      sellingPrice:
-        product.sellingPrice.toFixed(2),
+        profitPerUnit:
+          product.profitPerUnit.toFixed(2),
 
-      profitPerUnit:
-        product.profitPerUnit.toFixed(2),
+        profitMargin:
+          product.profitMargin.toFixed(2),
 
-      profitMargin:
-        product.profitMargin.toFixed(2),
+        expectedMonthlySales:
+          product.expectedMonthlySales,
 
-      expectedMonthlySales:
-        product.expectedMonthlySales,
+        expectedMonthlyRevenue:
+          product.expectedMonthlyRevenue.toFixed(2),
 
-      expectedMonthlyRevenue:
-        product.expectedMonthlyRevenue.toFixed(2),
-
-      expectedMonthlyProfit:
-        product.expectedMonthlyProfit.toFixed(2),
+        expectedMonthlyProfit:
+          product.expectedMonthlyProfit.toFixed(2),
+     });
     });
   });
 
@@ -222,7 +243,7 @@ export async function saveAsExcel(
 // PDF EXPORT
 // --------------------
 export async function saveAsPdf(
-  data: ProductFinance[]
+  data: Firm[]
 ) {
 
   const pdfDoc = await PDFDocument.create();
@@ -243,8 +264,19 @@ export async function saveAsPdf(
   });
 
   y -= 40;
+  data.forEach((firm: Firm) => {
+    page.drawText(
+      `${firm.firmName}:`,
+      {
+        x: 50,
+        y,
+        size: 32,
+        font,
+      }
+    );
 
-  data.forEach((product, index) => {
+    y -= 30;
+  firm.products.forEach((product : Product, index) => {
 
     page.drawText(
       `Product #${index + 1}: ${product.productName}`,
@@ -387,8 +419,10 @@ export async function saveAsPdf(
         font,
       }
     );
+    
 
     y -= 35;
+    });
   });
 
   const pdfBytes = await pdfDoc.save();
