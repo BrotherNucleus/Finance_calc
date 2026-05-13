@@ -5,7 +5,8 @@ import {
 
 import {
   createFirm,
-  calculateProductFinance
+  calculateProductFinance,
+  calculateEventFinance
 } from "./types"
 
 async function main() {
@@ -43,8 +44,20 @@ async function main() {
     ),
   ];
 
+  const events = [
+    calculateEventFinance(
+      "Something-con",
+
+      30000,
+      100000,
+      12500,
+
+      500000
+    ),
+  ]
+
   const firms = [
-    createFirm("Something INC", report)
+    createFirm("Something INC", report, events)
   ]
 
   await saveAsExcel(firms);

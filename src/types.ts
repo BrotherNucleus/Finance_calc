@@ -19,17 +19,35 @@ export type Product = {
   expectedMonthlyProfit: number;
 };
 
+export type Event = {
+    eventName: string;
+
+    marketingCost: number;
+    venueCost: number;
+    staffCost: number;
+
+    totalCost: number;
+
+    expectedRevenue: number;
+    expectedProfit: number;
+
+    ROI: number;
+};
+
 export type Firm = {
   firmName: string;
   products: Product[];
+  events: Event[];
 }
 
 export function createFirm(
   firmName: string,
-  products: Product[]) : Firm {
+  products: Product[],
+  events: Event[]) : Firm {
     return {
       firmName,
       products,
+      events,
     };
   }
 
@@ -82,3 +100,31 @@ export function createFirm(
     expectedMonthlyProfit,
   };
 }
+
+export function calculateEventFinance(
+    eventName: string,
+    
+    marketingCost: number,
+    venueCost: number,
+    staffCost: number,
+
+    expectedRevenue: number) : Event {
+        const totalCost = marketingCost + 
+            venueCost + staffCost;
+        const expectedProfit = expectedRevenue - totalCost;
+        const ROI = (expectedProfit/totalCost)*100;
+
+        return {
+            eventName,
+
+            marketingCost,
+            venueCost,
+            staffCost,
+            totalCost,
+
+            expectedRevenue,
+            expectedProfit,
+
+            ROI,
+        }
+    }

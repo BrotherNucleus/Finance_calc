@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import ExcelJS from "exceljs";
 import { PDFDocument, StandardFonts } from "pdf-lib";
-import {Firm, Product} from "./types"
+import {Firm, Product, Event} from "./types"
 
 
 // --------------------
@@ -27,10 +27,13 @@ export async function saveAsExcel(
 
   const workbook = new ExcelJS.Workbook();
 
-  const worksheet =
-    workbook.addWorksheet("Business Finance");
+  const worksheet_product =
+    workbook.addWorksheet("Product_Finance");
 
-  worksheet.columns = [
+  const worksheet_event = 
+    workbook.addWorksheet("Event_Finance");
+
+  worksheet_product.columns = [
     {
       header: "Firm",
       key: "firmName",
@@ -131,13 +134,81 @@ export async function saveAsExcel(
     },
   ];
 
+  worksheet_event.columns = [
+    {
+      header: "Organizer",
+      key: "firmName",
+      width: 25,
+    },
+    {
+      header: "Event",
+      key: "eventName",
+      width: 25,
+    },
+    {
+      header: "Marketing Cost",
+      key: "marketingCost",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Venue Cost",
+      key: "venueCost",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Staff Cost",
+      key: "staffCost",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Total Cost",
+      key: "totalCost",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Expected Revenue",
+      key: "expectedRevenue",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Expected Profit",
+      key: "expectedProfit",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+    {
+      header: "Return on Investment",
+      key: "ROI",
+      width: 18,
+      style: {
+        numFmt: '0.00'
+      }
+    },
+  ];
 
 
   data.forEach((firm: Firm) => {
     firm.products.forEach((product: Product) => {
-      const r= worksheet.rowCount + 1;
+      const r = worksheet_product.rowCount + 1;
 
-      worksheet.addRow({
+      worksheet_product.addRow({
         firmName: firm.firmName, //A
 
         productName: product.productName, //B
@@ -180,6 +251,33 @@ export async function saveAsExcel(
           formula: `I${r}*K${r}`, //M
         },
      });
+    });
+    firm.events.forEach((event: Event) => {
+      const e = worksheet_event.rowCount + 1;
+
+      worksheet_event.addRow({
+        firmName: firm.firmName,
+
+        eventName: event.eventName,
+
+        marketingCost: event.marketingCost, //C
+        venueCost: event.venueCost, //D
+        staffCost: event.staffCost, //E
+
+        totalCost: {
+          formula: `C${e}+D${e}+E${e}`, //F
+        },
+
+        expectedRevenue: event.expectedRevenue, //G
+
+        expectedProfit: {
+          formula: `G${e}-F${e}`, //H
+        },
+
+        ROI: {
+          formula: `H${e}/F${e}*100`, //I
+        },
+      })
     });
   });
 
@@ -233,7 +331,7 @@ export async function saveAsPdf(
   firm.products.forEach((product : Product, index) => {
 
     page.drawText(
-      `Product #${index + 1}: ${product.productName}`,
+      `${product.productName}`,
       {
         x: 50,
         y,
@@ -376,6 +474,104 @@ export async function saveAsPdf(
     
 
     y -= 35;
+    });
+  firm.events.forEach((event: Event) => {
+    page.drawText(
+      `${event.eventName}`,
+      {
+        x: 50,
+        y,
+        size: 16,
+        font,
+      }
+    );
+
+    y -= 22;
+
+    page.drawText(
+      `Marketing Cost: $${event.marketingCost.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+
+    page.drawText(
+      `Venue Cost: $${event.venueCost.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+
+    page.drawText(
+      `Staff Cost: $${event.staffCost.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+
+    page.drawText(
+      `Total Cost: $${event.totalCost.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+
+    page.drawText(
+      `Expected Revenue: $${event.expectedRevenue.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+
+    page.drawText(
+      `Expected Profit: $${event.expectedProfit.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+    
+    page.drawText(
+      `Return on Investment: $${event.ROI.toFixed(2)}`,
+      {
+        x: 70,
+        y,
+        size: 12,
+        font,
+      }
+    );
+
+    y -= 18;
+    
     });
   });
 
