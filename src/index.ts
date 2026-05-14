@@ -60,9 +60,9 @@ async function main() {
     createFirm("Something INC", report, events)
   ]
 
-  await saveAsExcel(firms);
+  //await saveAsExcel(firms);
 
-  await saveAsPdf(firms);
+  //await saveAsPdf(firms);
 
   console.log("Business finance reports generated.");
 }

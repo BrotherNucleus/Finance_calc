@@ -3,6 +3,9 @@ import path from "path";
 import ExcelJS from "exceljs";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import {Firm, Product, Event} from "./types"
+import {GeneralInfoData, BudgetData, CostsData, IncomeData,
+  TaxData, FinanceFormData
+} from "../frontend/src/types/financeTypes"
 
 
 // --------------------
@@ -21,274 +24,233 @@ function ensureOutputDir(): string {
 // --------------------
 // EXCEL EXPORT
 // --------------------
+function getColumnLetter(col: number): string {
+  let temp = 0;
+  let letter = "";
+
+  while (col > 0) {
+    temp = (col - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    col = (col - temp - 1) / 26;
+  }
+
+  return letter;
+}
+
+
 export async function saveAsExcel(
-  data: Firm[]
+  data: FinanceFormData
 ) {
 
   const workbook = new ExcelJS.Workbook();
 
-  const worksheet_product =
+  const worksheet =
     workbook.addWorksheet("Product_Finance");
 
-  const worksheet_event = 
-    workbook.addWorksheet("Event_Finance");
+  const currency : string = data.currency; 
 
-  worksheet_product.columns = [
-    {
-      header: "Firm",
-      key: "firmName",
-      width: 25,
-    },
-    {
-      header: "Product",
-      key: "productName",
-      width: 25,
-    },
-    {
-      header: "Production Cost",
-      key: "productionCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Packaging Cost",
-      key: "packagingCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Shipping Cost",
-      key: "shippingCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Marketing Cost",
-      key: "marketingCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Total Cost / Unit",
-      key: "totalCostPerUnit",
-      width: 20,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Selling Price",
-      key: "sellingPrice",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Profit / Unit",
-      key: "profitPerUnit",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Profit Margin %",
-      key: "profitMargin",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Monthly Sales",
-      key: "expectedMonthlySales",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Monthly Revenue",
-      key: "expectedMonthlyRevenue",
-      width: 20,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Monthly Profit",
-      key: "expectedMonthlyProfit",
-      width: 20,
-      style: {
-        numFmt: '0.00'
-      }
-    },
+
+
+  const isProj = (str: string) => str === "project";
+  let PoBName : string;
+  let PoEName : string;
+  const country = data.generalInfo.country;
+  const isCountry = data.generalInfo.country !== undefined
+  console.log(typeof(country));
+  if (isProj(data.contextType)) {
+    PoBName = "Project Name";
+    PoEName = "Number of Participants"
+  } else {
+    PoBName = "Firm Name";
+    PoEName = "Number of Employees";
+  }
+
+  let Row2 = [
+    PoBName,
+    "Type",
+    PoEName,
+    ...(country ? ["Country"] : []),
+    "Currency",
+  ]
+
+  worksheet.addRow(["General Information"]) //Row 1 (merged)
+
+  worksheet.addRow(Row2) //Row 2
+  worksheet.addRow([data.generalInfo.name, //A3
+    data.generalInfo.type, //B3
+    data.generalInfo.participantsOrEmployees, //C3 
+    ...(country ? [country] : []),
+    data.currency, // D3
+
+    ]) //Row 3 [E3]
+
+  worksheet.addRow([]); //Row 4 - blank space
+  
+  const VarTitle = (str : string | number | boolean | undefined, str2 : string) => str ? [str2] : [];
+  const VarVal = (str : string | number | boolean | undefined) => str ? [str] : [];
+  const VarSum = (val : number | undefined) => val ? val : 0;
+  const doesExist = (val : number | undefined) => val ? true : false;
+
+  const budget = data.budget;
+  let Row6 = [
+    ...(VarTitle(budget.fundingSource, "Funding Source")),
+    ...(VarTitle(budget.duration, "Duration")),
+    ...(VarTitle(budget.planningHorizon, "Planning Horizon")),
+    ...(VarTitle(budget.budgetPeriod, "Budget Period")),
+    ...(VarTitle(budget.totalBudget, "Total Budget")),
+    ...(VarTitle(budget.plannedBudget, "Planned Budget")),
+
+  ]
+
+  worksheet.addRow(["Budget Information"]); //Row 5 (merged)
+  worksheet.addRow(Row6); //Row 6
+  worksheet.addRow([
+    ...(VarVal(budget.fundingSource)),
+    ...(VarVal(budget.duration)),
+    ...(VarVal(budget.planningHorizon)),
+    ...(VarVal(budget.budgetPeriod)),
+    ...(VarVal(budget.totalBudget)),
+    ...(VarVal(budget.plannedBudget)),
+  ]); //Row 7
+  
+  
+  const cost = data.costs;
+  let values_cost = [
+  doesExist(cost.estimatedExpenses),
+  doesExist(cost.additionalCosts),
+  doesExist(cost.reserveCosts),
+  doesExist(cost.otherCosts),
+  doesExist(cost.fixedCosts),
+  doesExist(cost.variableCosts),
+  doesExist(cost.operatingCosts)
+]
+  let valLen = 0;
+  values_cost.forEach(b => {
+    if(b) {
+      valLen += 1;
+    }
+  })
+
+
+
+  let Row10 = [
+    ...(VarTitle(cost.estimatedExpenses, "Estimated Expenses")),
+    ...(VarTitle(cost.additionalCosts, "Additional Costs")),
+    ...(VarTitle(cost.reserveCosts, "Reserve Costs")),
+    ...(VarTitle(cost.otherCosts, "Other Costs")),
+    ...(VarTitle(cost.fixedCosts, "Fixed Costs")),
+    ...(VarTitle(cost.variableCosts, "Variable Costs")),
+    ...(VarTitle(cost.operatingCosts, "Operating Costs")),
+    "Total Cost",
   ];
 
-  worksheet_event.columns = [
+  worksheet.addRow([]); //Row 8
+  worksheet.addRow(["Costs"]); //Row 9 (merged)
+  worksheet.addRow(Row10); //Row 10
+  let r = worksheet.rowCount + 1;
+  worksheet.addRow([
+    ...(VarVal(cost.estimatedExpenses)),
+    ...(VarVal(cost.additionalCosts)),
+    ...(VarVal(cost.reserveCosts)),
+    ...(VarVal(cost.otherCosts)),
+    ...(VarVal(cost.fixedCosts)),
+    ...(VarVal(cost.variableCosts)),
+    ...(VarVal(cost.operatingCosts)),
     {
-      header: "Organizer",
-      key: "firmName",
-      width: 25,
-    },
-    {
-      header: "Event",
-      key: "eventName",
-      width: 25,
-    },
-    {
-      header: "Marketing Cost",
-      key: "marketingCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Venue Cost",
-      key: "venueCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Staff Cost",
-      key: "staffCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Total Cost",
-      key: "totalCost",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Expected Revenue",
-      key: "expectedRevenue",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Expected Profit",
-      key: "expectedProfit",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
-    {
-      header: "Return on Investment",
-      key: "ROI",
-      width: 18,
-      style: {
-        numFmt: '0.00'
-      }
-    },
+      formula: `SUM(A${r}:${getColumnLetter(valLen)}${r})`,
+    }
+  ]); //Row 11
+
+  const income = data.income;
+  let Row14 = [
+    ...(VarTitle(income.additionalFunding, "Additional funding")),
+    ...(VarTitle(income.ownContribution, "Own Contribution")),
+    ...(VarTitle(income.otherIncome, "Other Income")),
+    ...(VarTitle(income.expectedRevenue, "Expected Revenue")),
+    ...(VarTitle(income.expectedProfit, "Expected Profit")),
+    ...(VarTitle(income.investmentAmount, "Investment Amount")),
   ];
 
+  worksheet.addRow([]); //Row 12
+  worksheet.addRow(["Income"]); //Row 13
+  worksheet.addRow(Row14); //Row 14
+  r = worksheet.rowCount + 1;
+  worksheet.addRow([
+    ...(VarVal(income.additionalFunding)),
+    ...(VarVal(income.ownContribution)),
+    ...(VarVal(income.otherIncome)),
+    ...(VarVal(income.expectedRevenue)),
+    ...(VarVal(income.expectedProfit)),
+    ...(VarVal(income.investmentAmount)),
+  ]); //Row 15
 
-  data.forEach((firm: Firm) => {
-    firm.products.forEach((product: Product) => {
-      const r = worksheet_product.rowCount + 1;
 
-      worksheet_product.addRow({
-        firmName: firm.firmName, //A
+  const tax = data.taxes;
+  let Row18 = [
+    ...(VarTitle(tax.vatIncluded, "Is vat Included")),
+    ...(VarTitle(tax.vatRate, "Vat Rate")),
+    ...(VarTitle(tax.incomeTaxRate, "Income Tax Rate")),
+    ...(VarTitle(tax.additionalFees, "Additional Fees")),
+    ...(VarTitle(tax.percentageFee, "Percentage Fee")),
+    ...(VarTitle(tax.supportAmount, "Support Amount")),
+    ...(VarTitle(tax.safetyReserve, "Safety Reserve")),
+  ];
+  worksheet.addRow([]); //Row 16
+  worksheet.addRow(["Taxes"]); //Row 17
+  worksheet.addRow(Row18); //Row 18
+  worksheet.addRow([
+    ...(VarVal(tax.vatIncluded)),
+    ...(VarVal(tax.vatRate)),
+    ...(VarVal(tax.incomeTaxRate)),
+    ...(VarVal(tax.additionalFees)),
+    ...(VarVal(tax.percentageFee)),
+    ...(VarVal(tax.supportAmount)),
+    ...(VarVal(tax.safetyReserve)),
+  ]); //Row 19
+  const endColID = worksheet.columnCount;
+  worksheet.mergeCells(1, 1, 1, endColID);
+  worksheet.mergeCells(4, 1, 4, endColID);
+  worksheet.mergeCells(5, 1, 5, endColID);
+  worksheet.mergeCells(8, 1, 8, endColID);
+  worksheet.mergeCells(9, 1, 9, endColID);
+  worksheet.mergeCells(12, 1, 12, endColID);
+  worksheet.mergeCells(13, 1, 13, endColID);
+  worksheet.mergeCells(16, 1, 16, endColID);
+  worksheet.mergeCells(17, 1, 17, endColID);
 
-        productName: product.productName, //B
-
-        productionCost:
-          product.productionCost, //C
-
-        packagingCost:
-          product.packagingCost, //D
-
-        shippingCost:
-          product.shippingCost, //E
-
-        marketingCost:
-          product.marketingCost, //F
-
-        totalCostPerUnit: {
-          formula: `C${r}+D${r}+E${r}+F${r}`, //G
-        },
-          
-
-        sellingPrice:
-          product.sellingPrice, //H
-
-        profitPerUnit:{
-          formula: `H${r}-G${r}`, //I
-        },
-
-        profitMargin: {
-          formula: `I${r}/H${r}*100`, //J
-        },
-
-        expectedMonthlySales:
-          product.expectedMonthlySales, //K
-
-        expectedMonthlyRevenue: {
-          formula: `H${r}*K${r}`, //L
-        },
-        expectedMonthlyProfit: {
-          formula: `I${r}*K${r}`, //M
-        },
-     });
-    });
-    firm.events.forEach((event: Event) => {
-      const e = worksheet_event.rowCount + 1;
-
-      worksheet_event.addRow({
-        firmName: firm.firmName,
-
-        eventName: event.eventName,
-
-        marketingCost: event.marketingCost, //C
-        venueCost: event.venueCost, //D
-        staffCost: event.staffCost, //E
-
-        totalCost: {
-          formula: `C${e}+D${e}+E${e}`, //F
-        },
-
-        expectedRevenue: event.expectedRevenue, //G
-
-        expectedProfit: {
-          formula: `G${e}-F${e}`, //H
-        },
-
-        ROI: {
-          formula: `H${e}/F${e}*100`, //I
-        },
-      })
-    });
+  worksheet.columns.forEach((column) => {
+    let minLen = 10;
+    column.eachCell?.({ includeEmpty: true }, (cell) => {
+    const value = cell.value ? cell.value.toString() : "";
+    minLen = Math.max(minLen, value.length);
   });
 
-  const outputDir = ensureOutputDir();
+  column.width = minLen + 2;
+  });
 
-  const filePath =
-    path.join(outputDir, "business-report.xlsx");
+  const buffer = await workbook.xlsx.writeBuffer();
 
-  await workbook.xlsx.writeFile(filePath);
+  const blob = new Blob(
+    [buffer],
+    {
+      type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+  );
 
-  console.log(`Excel saved: ${filePath}`);
+  const url = window.URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "report.xlsx";
+
+  a.click();
+
+  window.URL.revokeObjectURL(url);
+}
+
+export async function OpenExcel(path:string) {
+  
 }
 
 // --------------------
