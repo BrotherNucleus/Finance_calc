@@ -1,8 +1,13 @@
 import {
-  calculateProductFinance,
   saveAsExcel,
   saveAsPdf,
 } from "./Serialization";
+
+import {
+  createFirm,
+  calculateProductFinance,
+  calculateEventFinance
+} from "./types"
 
 async function main() {
 
@@ -39,9 +44,25 @@ async function main() {
     ),
   ];
 
-  await saveAsExcel(report);
+  const events = [
+    calculateEventFinance(
+      "Something-con",
 
-  await saveAsPdf(report);
+      30000,
+      100000,
+      12500,
+
+      500000
+    ),
+  ]
+
+  const firms = [
+    createFirm("Something INC", report, events)
+  ]
+
+  await saveAsExcel(firms);
+
+  await saveAsPdf(firms);
 
   console.log("Business finance reports generated.");
 }
