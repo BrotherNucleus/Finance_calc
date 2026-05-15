@@ -1,30 +1,27 @@
 import InputField from "../components/InputField";
-
-import type {
-  BudgetData,
-} from "../types/financeTypes";
+import type { BudgetData } from "../types/financeTypes";
 
 type BudgetStepProps = {
   contextType: "project" | "business" | null;
-
   data: BudgetData;
-
-  onChange: (
-    data: BudgetData
-  ) => void;
+  errors: Record<string, string>;
+  onChange: (data: BudgetData) => void;
 };
 
 function BudgetStep({
   contextType,
   data,
+  errors,
   onChange,
 }: BudgetStepProps) {
+  const handleNumberChange = (value: string) => {
+    return value === "" ? undefined : Number(value);
+  };
+
   if (contextType === "project") {
     return (
       <div className="step-card">
-        <p className="step-small-title">
-          Step 3 of 7
-        </p>
+        <p className="step-small-title">Step 3 of 7</p>
 
         <h2>Project Budget</h2>
 
@@ -33,155 +30,125 @@ function BudgetStep({
         </p>
 
         <div className="form-grid">
-          <InputField
-            label="Total Budget"
-            type="number"
-            placeholder="e.g. 15000"
-            value={data.totalBudget}
-            onChange={(value) =>
-              onChange({
-                ...data,
-                totalBudget:
-                  Number(value),
-              })
-            }
-          />
-        <div className="form-group">
-          <label>Currency</label>
+          <div>
+            <InputField
+              label="Total Budget"
+              type="number"
+              placeholder="e.g. 15000"
+              value={data.totalBudget}
+              className={errors.totalBudget ? "input-error" : ""}
+              onChange={(value) =>
+                onChange({
+                  ...data,
+                  totalBudget: handleNumberChange(value),
+                })
+              }
+            />
 
-          <select
-            value={data.currency}
-            onChange={(event) =>
-              onChange({
-                ...data,
-                currency:
-                  event.target.value,
-              })
-            }
-          >
-            <option value="">
-              Select currency
-            </option>
-
-            <option value="eur">
-              EUR (€)
-            </option>
-
-            <option value="usd">
-              USD ($)
-            </option>
-
-            <option value="pln">
-              PLN (zł)
-            </option>
-
-            <option value="gbp">
-              GBP (£)
-            </option>
-          </select>
-        </div>
+            {errors.totalBudget && (
+              <p className="error-text">{errors.totalBudget}</p>
+            )}
+          </div>
 
           <div className="form-group">
-            <label>
-              Main Funding Source
-            </label>
+            <label>Currency</label>
 
             <select
+              className={errors.currency ? "input-error" : ""}
+              value={data.currency}
+              onChange={(event) =>
+                onChange({
+                  ...data,
+                  currency: event.target.value,
+                })
+              }
+            >
+              <option value="">Select currency</option>
+              <option value="eur">EUR (€)</option>
+              <option value="usd">USD ($)</option>
+              <option value="pln">PLN (zł)</option>
+              <option value="gbp">GBP (£)</option>
+            </select>
+
+            {errors.currency && (
+              <p className="error-text">{errors.currency}</p>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label>Main Funding Source</label>
+
+            <select
+              className={errors.fundingSource ? "input-error" : ""}
               value={data.fundingSource}
               onChange={(event) =>
                 onChange({
                   ...data,
-                  fundingSource:
-                    event.target.value,
+                  fundingSource: event.target.value,
                 })
               }
             >
-              <option value="">
-                Select funding source
-              </option>
-
-              <option value="university">
-                University
-              </option>
-
-              <option value="grant">
-                Grant
-              </option>
-
-              <option value="private">
-                Private funding
-              </option>
-
-              <option value="sponsorship">
-                Sponsorship
-              </option>
-
-              <option value="own-budget">
-                Own budget
-              </option>
-
-              <option value="other">
-                Other
-              </option>
+              <option value="">Select funding source</option>
+              <option value="university">University</option>
+              <option value="grant">Grant</option>
+              <option value="private">Private funding</option>
+              <option value="sponsorship">Sponsorship</option>
+              <option value="own-budget">Own budget</option>
+              <option value="other">Other</option>
             </select>
+
+            {errors.fundingSource && (
+              <p className="error-text">{errors.fundingSource}</p>
+            )}
           </div>
 
-          <InputField
-            label="Project Duration (months)"
-            type="number"
-            placeholder="e.g. 6"
-            value={data.duration}
-            onChange={(value) =>
-              onChange({
-                ...data,
-                duration:
-                  Number(value),
-              })
-            }
-          />
+          <div>
+            <InputField
+              label="Project Duration (months)"
+              type="number"
+              placeholder="e.g. 6"
+              value={data.duration}
+              className={errors.duration ? "input-error" : ""}
+              onChange={(value) =>
+                onChange({
+                  ...data,
+                  duration: handleNumberChange(value),
+                })
+              }
+            />
+
+            {errors.duration && (
+              <p className="error-text">{errors.duration}</p>
+            )}
+          </div>
 
           <div className="form-group">
-            <label>
-              Budget Period
-            </label>
+            <label>Budget Period</label>
 
             <select
+              className={errors.budgetPeriod ? "input-error" : ""}
               value={data.budgetPeriod}
               onChange={(event) =>
                 onChange({
                   ...data,
-                  budgetPeriod:
-                    event.target.value,
+                  budgetPeriod: event.target.value,
                 })
               }
             >
-              <option value="">
-                Select period
-              </option>
-
-              <option value="one-time">
-                One-time project
-              </option>
-
-              <option value="monthly">
-                Monthly
-              </option>
-
-              <option value="semester">
-                Semester
-              </option>
-
-              <option value="yearly">
-                Yearly
-              </option>
+              <option value="">Select period</option>
+              <option value="one-time">One-time project</option>
+              <option value="monthly">Monthly</option>
+              <option value="semester">Semester</option>
+              <option value="yearly">Yearly</option>
             </select>
+
+            {errors.budgetPeriod && (
+              <p className="error-text">{errors.budgetPeriod}</p>
+            )}
           </div>
 
           <div className="form-group full-width">
-            <label>
-              Budget Notes (optional)
-            </label>
-
+            <label>Budget Notes (optional)</label>
             <textarea placeholder="Additional project budget information..." />
           </div>
         </div>
@@ -191,9 +158,7 @@ function BudgetStep({
 
   return (
     <div className="step-card">
-      <p className="step-small-title">
-        Step 3 of 7
-      </p>
+      <p className="step-small-title">Step 3 of 7</p>
 
       <h2>Business Budget</h2>
 
@@ -202,107 +167,97 @@ function BudgetStep({
       </p>
 
       <div className="form-grid">
-        <InputField
-          label="Planned Budget"
-          type="number"
-          placeholder="e.g. 500000"
-          value={data.plannedBudget}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              plannedBudget:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="Planned Budget"
+            type="number"
+            placeholder="e.g. 500000"
+            value={data.plannedBudget}
+            className={errors.plannedBudget ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                plannedBudget: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.plannedBudget && (
+            <p className="error-text">{errors.plannedBudget}</p>
+          )}
+        </div>
 
         <div className="form-group">
           <label>Currency</label>
 
           <select
+            className={errors.currency ? "input-error" : ""}
             value={data.currency}
             onChange={(event) =>
               onChange({
                 ...data,
-                currency:
-                  event.target.value,
+                currency: event.target.value,
               })
             }
           >
-            <option value="">
-              Select currency
-            </option>
-
-            <option value="eur">
-              EUR (€)
-            </option>
-
-            <option value="usd">
-              USD ($)
-            </option>
-
-            <option value="pln">
-              PLN (zł)
-            </option>
-
-            <option value="gbp">
-              GBP (£)
-            </option>
+            <option value="">Select currency</option>
+            <option value="eur">EUR (€)</option>
+            <option value="usd">USD ($)</option>
+            <option value="pln">PLN (zł)</option>
+            <option value="gbp">GBP (£)</option>
           </select>
+
+          {errors.currency && (
+            <p className="error-text">{errors.currency}</p>
+          )}
         </div>
 
         <div className="form-group">
-          <label>
-            Budget Period
-          </label>
+          <label>Budget Period</label>
 
           <select
+            className={errors.budgetPeriod ? "input-error" : ""}
             value={data.budgetPeriod}
             onChange={(event) =>
               onChange({
                 ...data,
-                budgetPeriod:
-                  event.target.value,
+                budgetPeriod: event.target.value,
               })
             }
           >
-            <option value="">
-              Select period
-            </option>
-
-            <option value="monthly">
-              Monthly
-            </option>
-
-            <option value="quarterly">
-              Quarterly
-            </option>
-
-            <option value="yearly">
-              Yearly
-            </option>
+            <option value="">Select period</option>
+            <option value="monthly">Monthly</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Yearly</option>
           </select>
+
+          {errors.budgetPeriod && (
+            <p className="error-text">{errors.budgetPeriod}</p>
+          )}
         </div>
 
-        <InputField
-          label="Planning Horizon (months)"
-          type="number"
-          placeholder="e.g. 12"
-          value={data.planningHorizon}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              planningHorizon:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="Planning Horizon (months)"
+            type="number"
+            placeholder="e.g. 12"
+            value={data.planningHorizon}
+            className={errors.planningHorizon ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                planningHorizon: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.planningHorizon && (
+            <p className="error-text">{errors.planningHorizon}</p>
+          )}
+        </div>
 
         <div className="form-group full-width">
-          <label>
-            Budget Notes (optional)
-          </label>
-
+          <label>Budget Notes (optional)</label>
           <textarea placeholder="Additional business budget information..." />
         </div>
       </div>

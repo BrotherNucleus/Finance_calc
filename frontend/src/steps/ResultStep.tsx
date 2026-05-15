@@ -5,9 +5,10 @@ import { calculateFinanceMock } from "../utils/mockCalculations";
 type ResultStepProps = {
   contextType: "project" | "business" | null;
   formData: FinanceFormData;
+  onReset: () => void;
 };
 
-function ResultStep({ contextType, formData }: ResultStepProps) {
+function ResultStep({ contextType, formData, onReset }: ResultStepProps) {
   const results = calculateFinanceMock(formData);
 
   const currencyMap: Record<string, string> = {
@@ -78,6 +79,10 @@ function ResultStep({ contextType, formData }: ResultStepProps) {
           <button className="export-excel" onClick={() => exportExcel(formData)}>
             Export Excel
           </button>
+
+          <button className="reset-button" onClick={onReset}>
+            Calculate another budget
+          </button>
         </div>
       </div>
     );
@@ -139,6 +144,10 @@ function ResultStep({ contextType, formData }: ResultStepProps) {
 
         <button className="export-excel" onClick={() => exportExcel(formData)}>
           Export Excel
+        </button>
+
+        <button className="reset-button" onClick={onReset}>
+          Calculate another budget
         </button>
       </div>
     </div>

@@ -1,34 +1,24 @@
 import InputField from "../components/InputField";
-
-import type {
-  TaxData,
-} from "../types/financeTypes";
+import type { TaxData } from "../types/financeTypes";
 
 type TaxStepProps = {
   contextType: "project" | "business" | null;
-
   data: TaxData;
-
-  onChange: (
-    data: TaxData
-  ) => void;
+  errors: Record<string, string>;
+  onChange: (data: TaxData) => void;
 };
 
-function TaxStep({
-  contextType,
-  data,
-  onChange,
-}: TaxStepProps) {
+function TaxStep({ contextType, data, errors, onChange }: TaxStepProps) {
+  const handleNumberChange = (value: string) => {
+    return value === "" ? undefined : Number(value);
+  };
+
   if (contextType === "project") {
     return (
       <div className="step-card">
-        <p className="step-small-title">
-          Step 6 of 7
-        </p>
+        <p className="step-small-title">Step 6 of 7</p>
 
-        <h2>
-          Optional Taxes, Fees & Adjustments
-        </h2>
+        <h2>Optional Taxes, Fees & Adjustments</h2>
 
         <p className="step-description">
           Add optional VAT information, fees, reserves or adjustments for your project.
@@ -36,18 +26,14 @@ function TaxStep({
 
         <div className="form-grid">
           <div className="form-group full-width">
-            <label>
-              VAT Included?
-            </label>
+            <label>VAT Included?</label>
 
-            <div className="radio-group">
+            <div className={errors.vatIncluded ? "radio-group input-error" : "radio-group"}>
               <label>
                 <input
                   type="radio"
                   name="vatIncluded"
-                  checked={
-                    data.vatIncluded === true
-                  }
+                  checked={data.vatIncluded === true}
                   onChange={() =>
                     onChange({
                       ...data,
@@ -55,7 +41,6 @@ function TaxStep({
                     })
                   }
                 />
-
                 Yes
               </label>
 
@@ -63,9 +48,7 @@ function TaxStep({
                 <input
                   type="radio"
                   name="vatIncluded"
-                  checked={
-                    data.vatIncluded === false
-                  }
+                  checked={data.vatIncluded === false}
                   onChange={() =>
                     onChange({
                       ...data,
@@ -73,10 +56,13 @@ function TaxStep({
                     })
                   }
                 />
-
                 No
               </label>
             </div>
+
+            {errors.vatIncluded && (
+              <p className="error-text">{errors.vatIncluded}</p>
+            )}
           </div>
 
           <InputField
@@ -87,8 +73,7 @@ function TaxStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                additionalFees:
-                  Number(value),
+                additionalFees: handleNumberChange(value),
               })
             }
           />
@@ -101,8 +86,7 @@ function TaxStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                percentageFee:
-                  Number(value),
+                percentageFee: handleNumberChange(value),
               })
             }
           />
@@ -115,8 +99,7 @@ function TaxStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                supportAmount:
-                  Number(value),
+                supportAmount: handleNumberChange(value),
               })
             }
           />
@@ -129,17 +112,13 @@ function TaxStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                safetyReserve:
-                  Number(value),
+                safetyReserve: handleNumberChange(value),
               })
             }
           />
 
           <div className="form-group full-width">
-            <label>
-              Additional Notes (optional)
-            </label>
-
+            <label>Additional Notes (optional)</label>
             <textarea placeholder="Additional fee or adjustment information..." />
           </div>
         </div>
@@ -149,9 +128,7 @@ function TaxStep({
 
   return (
     <div className="step-card">
-      <p className="step-small-title">
-        Step 6 of 7
-      </p>
+      <p className="step-small-title">Step 6 of 7</p>
 
       <h2>Tax Information</h2>
 
@@ -160,33 +137,45 @@ function TaxStep({
       </p>
 
       <div className="form-grid">
-        <InputField
-          label="VAT Rate (%)"
-          type="number"
-          placeholder="e.g. 23"
-          value={data.vatRate}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              vatRate:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="VAT Rate (%)"
+            type="number"
+            placeholder="e.g. 23"
+            value={data.vatRate}
+            className={errors.vatRate ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                vatRate: handleNumberChange(value),
+              })
+            }
+          />
 
-        <InputField
-          label="Income Tax Rate (%)"
-          type="number"
-          placeholder="e.g. 19"
-          value={data.incomeTaxRate}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              incomeTaxRate:
-                Number(value),
-            })
-          }
-        />
+          {errors.vatRate && (
+            <p className="error-text">{errors.vatRate}</p>
+          )}
+        </div>
+
+        <div>
+          <InputField
+            label="Income Tax Rate (%)"
+            type="number"
+            placeholder="e.g. 19"
+            value={data.incomeTaxRate}
+            className={errors.incomeTaxRate ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                incomeTaxRate: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.incomeTaxRate && (
+            <p className="error-text">{errors.incomeTaxRate}</p>
+          )}
+        </div>
 
         <InputField
           label="Other Taxes / Fees"
@@ -196,31 +185,33 @@ function TaxStep({
           onChange={(value) =>
             onChange({
               ...data,
-              additionalFees:
-                Number(value),
+              additionalFees: handleNumberChange(value),
             })
           }
         />
 
-        <InputField
-          label="Tax Deductions"
-          type="number"
-          placeholder="e.g. 2000"
-          value={data.supportAmount}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              supportAmount:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="Tax Deductions"
+            type="number"
+            placeholder="e.g. 2000"
+            value={data.supportAmount}
+            className={errors.supportAmount ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                supportAmount: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.supportAmount && (
+            <p className="error-text">{errors.supportAmount}</p>
+          )}
+        </div>
 
         <div className="form-group full-width">
-          <label>
-            Tax Notes (optional)
-          </label>
-
+          <label>Tax Notes (optional)</label>
           <textarea placeholder="Additional tax information..." />
         </div>
       </div>

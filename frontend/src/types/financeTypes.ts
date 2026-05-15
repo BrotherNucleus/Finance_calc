@@ -6,56 +6,56 @@ export type GeneralInfoData = {
   name: string;
   type: string;
   description: string;
-  participantsOrEmployees: number;
+  participantsOrEmployees: number | undefined;
   country?: string;
 };
 
 export type BudgetData = {
-  totalBudget?: number;
-  plannedBudget?: number;
+  totalBudget?: number | undefined;
+  plannedBudget?: number | undefined;
   fundingSource?: string;
   currency?: string;
-  duration?: number;
-  planningHorizon?: number;
+  duration?: number | undefined;
+  planningHorizon?: number | undefined;
   budgetPeriod?: string;
 };
 
 export type CostsData = {
-  estimatedExpenses?: number;
+  estimatedExpenses?: number | undefined;
   additionalCosts?: number;
   reserveCosts?: number;
   otherCosts?: number;
 
-  fixedCosts?: number;
-  variableCosts?: number;
-  operatingCosts?: number;
+  fixedCosts?: number | undefined;
+  variableCosts?: number | undefined;
+  operatingCosts?: number | undefined;
 };
 
 export type IncomeData = {
   additionalFunding?: number;
-  ownContribution?: number;
+  ownContribution?: number | undefined;
   otherIncome?: number;
 
-  expectedRevenue?: number;
-  expectedProfit?: number;
-  investmentAmount?: number;
+  expectedRevenue?: number | undefined;
+  expectedProfit?: number | undefined;
+  investmentAmount?: number | undefined;
 };
 
 export type TaxData = {
-  vatIncluded?: boolean;
+  vatIncluded?: boolean | null;
 
-  vatRate?: number;
-  incomeTaxRate?: number;
+  vatRate?: number | undefined;
+  incomeTaxRate?: number | undefined;
 
   additionalFees?: number;
   percentageFee?: number;
-  supportAmount?: number;
+  supportAmount?: number | undefined;
   safetyReserve?: number;
 };
 
 export type FinanceFormData = {
   contextType: "project" | "business";
-  currency: string;
+  currency: string ;
   generalInfo: GeneralInfoData;
   budget: BudgetData;
   costs: CostsData;

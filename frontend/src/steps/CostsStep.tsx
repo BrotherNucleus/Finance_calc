@@ -1,30 +1,27 @@
 import InputField from "../components/InputField";
-
-import type {
-  CostsData,
-} from "../types/financeTypes";
+import type { CostsData } from "../types/financeTypes";
 
 type CostsStepProps = {
   contextType: "project" | "business" | null;
-
   data: CostsData;
-
-  onChange: (
-    data: CostsData
-  ) => void;
+  errors: Record<string, string>;
+  onChange: (data: CostsData) => void;
 };
 
 function CostsStep({
   contextType,
   data,
+  errors,
   onChange,
 }: CostsStepProps) {
+  const handleNumberChange = (value: string) => {
+    return value === "" ? undefined : Number(value);
+  };
+
   if (contextType === "project") {
     return (
       <div className="step-card">
-        <p className="step-small-title">
-          Step 4 of 7
-        </p>
+        <p className="step-small-title">Step 4 of 7</p>
 
         <h2>Costs Information</h2>
 
@@ -33,19 +30,25 @@ function CostsStep({
         </p>
 
         <div className="form-grid">
-          <InputField
-            label="Estimated Expenses"
-            type="number"
-            placeholder="e.g. 10000"
-            value={data.estimatedExpenses}
-            onChange={(value) =>
-              onChange({
-                ...data,
-                estimatedExpenses:
-                  Number(value),
-              })
-            }
-          />
+          <div>
+            <InputField
+              label="Estimated Expenses"
+              type="number"
+              placeholder="e.g. 10000"
+              value={data.estimatedExpenses}
+              className={errors.estimatedExpenses ? "input-error" : ""}
+              onChange={(value) =>
+                onChange({
+                  ...data,
+                  estimatedExpenses: handleNumberChange(value),
+                })
+              }
+            />
+
+            {errors.estimatedExpenses && (
+              <p className="error-text">{errors.estimatedExpenses}</p>
+            )}
+          </div>
 
           <InputField
             label="Additional Costs"
@@ -55,8 +58,7 @@ function CostsStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                additionalCosts:
-                  Number(value),
+                additionalCosts: handleNumberChange(value),
               })
             }
           />
@@ -69,8 +71,7 @@ function CostsStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                reserveCosts:
-                  Number(value),
+                reserveCosts: handleNumberChange(value),
               })
             }
           />
@@ -83,17 +84,13 @@ function CostsStep({
             onChange={(value) =>
               onChange({
                 ...data,
-                otherCosts:
-                  Number(value),
+                otherCosts: handleNumberChange(value),
               })
             }
           />
 
           <div className="form-group full-width">
-            <label>
-              Cost Notes (optional)
-            </label>
-
+            <label>Cost Notes (optional)</label>
             <textarea placeholder="Additional cost information..." />
           </div>
         </div>
@@ -103,9 +100,7 @@ function CostsStep({
 
   return (
     <div className="step-card">
-      <p className="step-small-title">
-        Step 4 of 7
-      </p>
+      <p className="step-small-title">Step 4 of 7</p>
 
       <h2>Costs Information</h2>
 
@@ -114,47 +109,65 @@ function CostsStep({
       </p>
 
       <div className="form-grid">
-        <InputField
-          label="Fixed Costs"
-          type="number"
-          placeholder="e.g. 120000"
-          value={data.fixedCosts}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              fixedCosts:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="Fixed Costs"
+            type="number"
+            placeholder="e.g. 120000"
+            value={data.fixedCosts}
+            className={errors.fixedCosts ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                fixedCosts: handleNumberChange(value),
+              })
+            }
+          />
 
-        <InputField
-          label="Variable Costs"
-          type="number"
-          placeholder="e.g. 200000"
-          value={data.variableCosts}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              variableCosts:
-                Number(value),
-            })
-          }
-        />
+          {errors.fixedCosts && (
+            <p className="error-text">{errors.fixedCosts}</p>
+          )}
+        </div>
 
-        <InputField
-          label="Operating Costs"
-          type="number"
-          placeholder="e.g. 50000"
-          value={data.operatingCosts}
-          onChange={(value) =>
-            onChange({
-              ...data,
-              operatingCosts:
-                Number(value),
-            })
-          }
-        />
+        <div>
+          <InputField
+            label="Variable Costs"
+            type="number"
+            placeholder="e.g. 200000"
+            value={data.variableCosts}
+            className={errors.variableCosts ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                variableCosts: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.variableCosts && (
+            <p className="error-text">{errors.variableCosts}</p>
+          )}
+        </div>
+
+        <div>
+          <InputField
+            label="Operating Costs"
+            type="number"
+            placeholder="e.g. 50000"
+            value={data.operatingCosts}
+            className={errors.operatingCosts ? "input-error" : ""}
+            onChange={(value) =>
+              onChange({
+                ...data,
+                operatingCosts: handleNumberChange(value),
+              })
+            }
+          />
+
+          {errors.operatingCosts && (
+            <p className="error-text">{errors.operatingCosts}</p>
+          )}
+        </div>
 
         <InputField
           label="Other Costs"
@@ -164,17 +177,13 @@ function CostsStep({
           onChange={(value) =>
             onChange({
               ...data,
-              otherCosts:
-                Number(value),
+              otherCosts: handleNumberChange(value),
             })
           }
         />
 
         <div className="form-group full-width">
-          <label>
-            Cost Notes (optional)
-          </label>
-
+          <label>Cost Notes (optional)</label>
           <textarea placeholder="Additional business cost information..." />
         </div>
       </div>

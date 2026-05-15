@@ -1,62 +1,61 @@
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { FiHome, FiInfo } from "react-icons/fi";
+import { FiHome, FiInfo, FiMenu, FiX } from "react-icons/fi";
 import { TbCalculator } from "react-icons/tb";
 
-// type SidebarProps = {
-//   currency: string;
-//   onCurrencyChange: (currency: string) => void;
-// };
-// { currency, onCurrencyChange }: SidebarProps
 function Sidebar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const closeMenu = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <aside className="sidebar">
-      <div>
-        <div className="logo">
-          <div className="logo-icon">logo</div>
-          <div>
-            <h2>Finance</h2>
-            <h2>Calculator</h2>
+    <>
+      <button
+        className="mobile-menu-button"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        {isOpen ? <FiX /> : <FiMenu />}
+      </button>
+
+      {isOpen && (
+        <div
+          className="sidebar-overlay"
+          onClick={closeMenu}
+        />
+      )}
+
+      <aside className={isOpen ? "sidebar open" : "sidebar"}>
+        <div>
+          <div className="logo">
+            <div className="logo-icon">logo</div>
+
+            <div>
+              <h2>Numy</h2>
+              <h2>Academy</h2>
+            </div>
           </div>
+
+          <nav className="sidebar-nav">
+            <NavLink className="nav-item" to="/" end onClick={closeMenu}>
+              <FiHome />
+              <span>Home</span>
+            </NavLink>
+
+            <NavLink className="nav-item" to="/calculator" onClick={closeMenu}>
+              <TbCalculator />
+              <span>Calculator</span>
+            </NavLink>
+
+            <NavLink className="nav-item" to="/about" onClick={closeMenu}>
+              <FiInfo />
+              <span>About Us</span>
+            </NavLink>
+          </nav>
         </div>
-
-        <nav className="sidebar-nav">
-          <NavLink className="nav-item" to="/" end >
-            <FiHome />
-            <span>Home</span>
-          </NavLink>
-
-          <NavLink className="nav-item " to="/calculator">
-            <TbCalculator />
-            <span>Calculator</span>
-          </NavLink>
-
-          <NavLink className="nav-item" to="/about">
-            <FiInfo />
-            <span>About Us</span>
-          </NavLink>
-        </nav>
-      </div>
-
-      {/* <div className="sidebar-bottom">
-        <div className="currency-box">
-          <label>Currency</label>
-          <select
-            value={currency}
-            onChange={(event) => onCurrencyChange(event.target.value)}
-          >
-            <option value="EUR">EUR (€)</option>
-            <option value="USD">USD ($)</option>
-            <option value="PLN">PLN (zł)</option>
-            <option value="GBP">GBP (£)</option>
-          </select>
-        </div> */}
-
-        {/* <div className="theme-toggle">
-          <button>☀️</button>
-          <button>🌙</button>
-        </div> */}
-      {/* </div> */}
-    </aside>
+      </aside>
+    </>
   );
 }
 
