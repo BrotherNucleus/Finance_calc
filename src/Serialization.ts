@@ -3,9 +3,8 @@ import path from "path";
 import ExcelJS from "exceljs";
 import { PDFDocument, StandardFonts } from "pdf-lib";
 import {Firm, Product, Event} from "./types"
-import {GeneralInfoData, BudgetData, CostsData, IncomeData,
-  TaxData, FinanceFormData
-} from "../frontend/src/types/financeTypes"
+import {FinanceFormData} from "../frontend/src/types/financeTypes"
+import {FinanceResult, calculateFinanceResults} from "../frontend/src/utils/mockCalculations"
 
 
 // --------------------
@@ -41,7 +40,7 @@ function getColumnLetter(col: number): string {
 export async function saveAsExcel(
   data: FinanceFormData
 ) {
-
+  const financeResult = calculateFinanceResults(data);
   const workbook = new ExcelJS.Workbook();
 
   const worksheet =
@@ -55,7 +54,6 @@ export async function saveAsExcel(
   let PoBName : string;
   let PoEName : string;
   const country = data.generalInfo.country;
-  const isCountry = data.generalInfo.country !== undefined
   console.log(typeof(country));
   if (isProj(data.contextType)) {
     PoBName = "Project Name";
@@ -86,8 +84,8 @@ export async function saveAsExcel(
 
   worksheet.addRow([]); //Row 4 - blank space
   
-  const VarTitle = (str : string | number | boolean | undefined, str2 : string) => str ? [str2] : [];
-  const VarVal = (str : string | number | boolean | undefined) => str ? [str] : [];
+  const VarTitle = (str : string | number | boolean | undefined |null, str2 : string) => str ? [str2] : [];
+  const VarVal = (str : string | number | boolean | undefined | null) => str ? [str] : [];
   const VarSum = (val : number | undefined) => val ? val : 0;
   const doesExist = (val : number | undefined) => val ? true : false;
 
@@ -141,7 +139,7 @@ export async function saveAsExcel(
     ...(VarTitle(cost.fixedCosts, "Fixed Costs")),
     ...(VarTitle(cost.variableCosts, "Variable Costs")),
     ...(VarTitle(cost.operatingCosts, "Operating Costs")),
-    "Total Cost",
+    "Base Cost",
   ];
 
   worksheet.addRow([]); //Row 8
@@ -207,6 +205,22 @@ export async function saveAsExcel(
     ...(VarVal(tax.supportAmount)),
     ...(VarVal(tax.safetyReserve)),
   ]); //Row 19
+
+  worksheet.addRow([]); //Row 20
+  worksheet.addRow(["Total"]);
+  worksheet.addRow([
+    ...(VarTitle(financeResult.totalBudget, "Budget")),
+    ...(VarTitle(financeResult.totalCosts, "Costs")),
+    ...(VarTitle(financeResult.totalIncome, "Income")),
+    ...(VarTitle(financeResult.totalBudget, "Final Balance")),
+  ]);
+  worksheet.addRow([
+    ...(VarVal(financeResult.totalBudget)),
+    ...(VarVal(financeResult.totalCosts)),
+    ...(VarVal(financeResult.totalIncome)),
+    ...(VarVal(financeResult.finalBalance)),
+  ]);
+
   const endColID = worksheet.columnCount;
   worksheet.mergeCells(1, 1, 1, endColID);
   worksheet.mergeCells(4, 1, 4, endColID);
@@ -217,6 +231,8 @@ export async function saveAsExcel(
   worksheet.mergeCells(13, 1, 13, endColID);
   worksheet.mergeCells(16, 1, 16, endColID);
   worksheet.mergeCells(17, 1, 17, endColID);
+  worksheet.mergeCells(20, 1, 20, endColID);
+  worksheet.mergeCells(21, 1, 21, endColID);
 
   worksheet.columns.forEach((column) => {
     let minLen = 10;
@@ -247,10 +263,6 @@ export async function saveAsExcel(
   a.click();
 
   window.URL.revokeObjectURL(url);
-}
-
-export async function OpenExcel(path:string) {
-  
 }
 
 // --------------------

@@ -9,5 +9,5 @@ export function exportPDF(data: FinanceFormData) {
 export function exportExcel(data: FinanceFormData) {
   console.log("Excel export data:", data);
   saveAsExcel(data);
-  alert("Excel export will be connected here.");
+  //alert("Excel export will be connected here.");
 }
