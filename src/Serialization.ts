@@ -268,21 +268,29 @@ export async function saveAsExcel(
 // --------------------
 // PDF EXPORT
 // --------------------
-export async function saveAsPdf(
-  data: Firm[]
-) {
-
+export async function saveAsPdf(data: any) {
+  // Create PDF
   const pdfDoc = await PDFDocument.create();
+  const financeResult = calculateFinanceResults(data);
 
-  const page = pdfDoc.addPage([750, 850]);
+  // Add page
+  const page = pdfDoc.addPage([595, 842]); // A4
 
-  const font =
-    await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const { width, height } = page.getSize();
 
-  let y = 800;
+  // Load font
+  const font = await pdfDoc.embedFont(
+    StandardFonts.Helvetica
+  );
 
-  // TITLE
-  page.drawText("Business Finance Report", {
+  const bold = await pdfDoc.embedFont(
+    StandardFonts.HelveticaBold
+  );
+
+  let y = height - 50;
+
+  // Title
+  page.drawText("Project Report", {
     x: 50,
     y,
     size: 22,
@@ -290,273 +298,235 @@ export async function saveAsPdf(
   });
 
   y -= 40;
-  data.forEach((firm: Firm) => {
+
+  // General Info
+  page.drawText(
+    `Name: ${data.generalInfo.name}`,
+    {
+      x: 50,
+      y,
+      size: 12,
+      font,
+    }
+  );
+
+  y -= 20;
+
+  page.drawText(
+    `Type: ${data.generalInfo.type}`,
+    {
+      x: 50,
+      y,
+      size: 12,
+      font,
+    }
+  );
+
+  y -= 20;
+
+  if (data.generalInfo.country) {
     page.drawText(
-      `${firm.firmName}:`,
+      `Country: ${data.generalInfo.country}`,
       {
         x: 50,
         y,
-        size: 32,
-        font,
-      }
-    );
-
-    y -= 30;
-  firm.products.forEach((product : Product, index) => {
-
-    page.drawText(
-      `${product.productName}`,
-      {
-        x: 50,
-        y,
-        size: 16,
-        font,
-      }
-    );
-
-    y -= 22;
-
-    page.drawText(
-      `Production Cost: $${product.productionCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
         size: 12,
         font,
       }
     );
 
-    y -= 18;
+    y -= 20;
+  }
 
-    page.drawText(
-      `Packaging Cost: $${product.packagingCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
+  const charMax = 80;
 
-    y -= 18;
+  const warpText = (str : string) => {
+    let charList = str.split('');
+    let newCharList : any[] = [];
+    let newLineFlag : boolean = false; 
+    let currNum = 0;
+      for (let i = 0; i < charList.length; i++) {
+        newCharList.push(charList[i]);
+        if(currNum % (charMax) === 0 && currNum !== 0) {
+          newLineFlag = true;
+        }
+        currNum++;
+        if(newLineFlag && charList[i] === ' ') {
+          newCharList.push('\n');
+          newLineFlag = false;
+          currNum = 0;
+        }
+      } 
+    return newCharList.join('');
+  }
 
-    page.drawText(
-      `Shipping Cost: $${product.shippingCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
+  page.drawText(
+    `Description: \n${warpText(data.generalInfo.description)}`,
+    {
+      x: 50,
+      y,
+      size: 12,
+      font,
+    }
+  );
 
-    y -= 18;
+  y -= 20;
 
-    page.drawText(
-      `Marketing Cost: $${product.marketingCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
+  const page2 = pdfDoc.addPage([595, 842]);
 
-    y -= 18;
-
-    page.drawText(
-      `Total Cost / Unit: $${product.totalCostPerUnit.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Selling Price: $${product.sellingPrice.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Profit / Unit: $${product.profitPerUnit.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Profit Margin: ${product.profitMargin.toFixed(2)}%`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Expected Monthly Sales: ${product.expectedMonthlySales}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Monthly Revenue: $${product.expectedMonthlyRevenue.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Monthly Profit: $${product.expectedMonthlyProfit.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-    
-
-    y -= 35;
-    });
-  firm.events.forEach((event: Event) => {
-    page.drawText(
-      `${event.eventName}`,
-      {
-        x: 50,
-        y,
-        size: 16,
-        font,
-      }
-    );
-
-    y -= 22;
-
-    page.drawText(
-      `Marketing Cost: $${event.marketingCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Venue Cost: $${event.venueCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Staff Cost: $${event.staffCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Total Cost: $${event.totalCost.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Expected Revenue: $${event.expectedRevenue.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-
-    page.drawText(
-      `Expected Profit: $${event.expectedProfit.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-    
-    page.drawText(
-      `Return on Investment: $${event.ROI.toFixed(2)}`,
-      {
-        x: 70,
-        y,
-        size: 12,
-        font,
-      }
-    );
-
-    y -= 18;
-    
-    });
+  y = height - 50;
+  // Budget section
+  page2.drawText("Budget Information", {
+    x: 50,
+    y,
+    size: 16,
+    font,
   });
 
+  y -= 20;
+
+  const budgetFields = [
+    ["Total Budget", data.budget.totalBudget],
+    ["Currency", data.budget.currency],
+    ["Planned Budget", data.budget.plannedBudget],
+    ["Funding Source", data.budget.fundingSource],
+    ["Duration", data.budget.duration],
+    ["Planning Horizon", data.budget.planningHorizon],
+    ["Budget Period", data.budget.budgetPeriod],
+  ].filter(([_, value]) => value !== undefined);
+
+  const listExistingOnPage = (fields : any[][]) => {for (const [label, value] of fields) {
+    page2.drawText(`${label}: ${value}`, {
+      x: 60,
+      y,
+      size: 12,
+      font,
+    });
+
+    y -= 12;
+  }
+}
+
+
+  listExistingOnPage(budgetFields);
+
+  y -= 20;
+
+  page2.drawText("Costs", {
+    x: 50,
+    y,
+    size: 16,
+    font,
+  });
+
+  y -= 20;
+
+  const costsFields = [
+    ["Estimated Expenses",data.costs.estimatedExpenses],
+    ["Additional Costs",data.costs.additionalCosts],
+    ["Reserve Costs",data.costs.reserveCosts],
+    ["Other Costs",data.costs.otherCosts],
+    ["Fixed Costs",data.costs.fixedCosts],
+    ["Variable Costs",data.costs.variableCosts],
+    ["Operating Costs",data.costs.operatingCosts],
+  ].filter(([_, value]) => value !== undefined || 0);
+
+  listExistingOnPage(costsFields);
+
+    y -= 20;
+
+
+  page2.drawText("Income", {
+    x: 50,
+    y,
+    size: 16,
+    font,
+  });
+
+  y -= 20;
+
+  const incomeFields = [
+    ["Additional Funding",data.income.additionalFunding],
+    ["Own Contribution",data.income.ownContribution],
+    ["Other Income",data.income.otherIncome],
+    ["Expected Revenue",data.income.expectedRevenue],
+    ["Expected Profit",data.income.expectedProfit],
+    ["Investment Amount",data.income.investmentAmount],
+  ].filter(([_, value]) => value !== undefined || 0);
+
+  listExistingOnPage(incomeFields);
+
+  y -= 20;
+
+  page2.drawText("Taxes", {
+    x: 50,
+    y,
+    size: 16,
+    font,
+  });
+
+  y -= 20;
+
+  const taxFields = [
+    ["Is Vat included", data.taxes.vatIncluded],
+    ["Vat Rate", data.taxes.vatRate],
+    ["Income Tax Rate", data.taxes.incomeTaxRate],
+    ["Additional Fees", data.taxes.additionalFees],
+    ["Percentage Fee", data.taxes.percentageFee],
+    ["Support Amount", data.taxes.supportAmount],
+    ["Safety Reserve", data.taxes.safetyReserve],
+  ].filter(([_, value]) => value !== undefined || null);
+
+  listExistingOnPage(taxFields);
+
+  y -= 20;
+
+  const totalFields = [
+    ["Budget",financeResult.totalBudget],
+    ["Costs",financeResult.totalCosts],
+    ["Income",financeResult.totalIncome],
+  ]
+
+  page2.drawText("Total", {
+    x: 50,
+    y,
+    size: 16,
+    font,
+  });
+
+  y -= 14;
+
+  listExistingOnPage(totalFields);
+
+  y -= 20;
+
+  page2.drawText(`Final Balance: ${financeResult.finalBalance}`, {
+    x: 50,
+    y,
+    size: 16,
+    font: bold,
+    
+  });
+  // Save PDF
   const pdfBytes = await pdfDoc.save();
+  const pdfBuffer = new Uint8Array(pdfBytes);
 
-  const outputDir = ensureOutputDir();
+  // Download in browser
+  const blob = new Blob(
+    [
+      pdfBuffer
+    ],
+    { type: "application/pdf" }
+  );
 
-  const filePath =
-    path.join(outputDir, "business-report.pdf");
+  const url = URL.createObjectURL(blob);
 
-  fs.writeFileSync(filePath, pdfBytes);
+  const a = document.createElement("a");
 
-  console.log(`PDF saved: ${filePath}`);
+  a.href = url;
+  a.download = "report.pdf";
+
+  a.click();
+
+  URL.revokeObjectURL(url);
 }
