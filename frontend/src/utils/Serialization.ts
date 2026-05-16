@@ -1,24 +1,8 @@
-import fs from "fs";
-import path from "path";
 import ExcelJS from "exceljs";
 import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
-import {Firm, Product, Event} from "./types"
-import {FinanceFormData} from "../frontend/src/types/financeTypes"
-import {FinanceResult, calculateFinanceResults} from "../frontend/src/utils/mockCalculations"
+import type {FinanceFormData} from "../types/financeTypes"
+import {calculateFinanceResults} from "./mockCalculations"
 
-
-// --------------------
-// ENSURE OUTPUT FOLDER
-// --------------------
-function ensureOutputDir(): string {
-  const outputDir = path.join(__dirname, "../dist");
-
-  if (!fs.existsSync(outputDir)) {
-    fs.mkdirSync(outputDir, { recursive: true });
-  }
-
-  return outputDir;
-}
 
 // --------------------
 // EXCEL EXPORT
@@ -277,7 +261,7 @@ export async function saveAsPdf(data: any) {
   // Add page
   const page = pdfDoc.addPage([595, 842]); // A4
 
-  const { width, height } = page.getSize();
+  const { width , height } = page.getSize();
 
   // Load font
   const font = await pdfDoc.embedFont(
@@ -289,11 +273,10 @@ export async function saveAsPdf(data: any) {
   );
 
   let y = height - 50;
-  const tabStops : number[] = [50, 150, 350, 450];
+  const tabStops : number[] = [50, 150, 350];
   const tabStop1 : number = tabStops[0] ?? 50;
   const tabStop2 : number = tabStops[1] ?? 50;
   const tabStop3 : number = tabStops[2] ?? 50;
-  const tabStop4 : number= tabStops[3] ?? 50;
   // Title
   page.drawText("Buisness Report", {
     x: tabStop1,

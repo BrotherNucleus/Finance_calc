@@ -1,5 +1,5 @@
 import type { FinanceFormData } from "../types/financeTypes";
-import {saveAsExcel, saveAsPdf} from "../../../src/Serialization"
+import {saveAsExcel, saveAsPdf} from "./Serialization"
 
 export function exportPDF(data: FinanceFormData) {
   console.log("PDF export data:", data);
