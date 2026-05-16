@@ -10,6 +10,7 @@ export default defineConfig({
       registerType: "autoUpdate",
 
       manifest: {
+        id: "/",
         name: "Numy Academy",
         short_name: "Numy",
 
