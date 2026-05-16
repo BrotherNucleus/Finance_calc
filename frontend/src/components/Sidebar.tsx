@@ -29,8 +29,12 @@ function Sidebar() {
       <aside className={isOpen ? "sidebar open" : "sidebar"}>
         <div>
           <div className="logo">
-            <div className="logo-icon">logo</div>
-
+            <img
+              src="/icons/logo2.png"
+              alt="Numy Academy"
+              className="logo-image"
+            />
+          
             <div>
               <h2>Numy</h2>
               <h2>Academy</h2>

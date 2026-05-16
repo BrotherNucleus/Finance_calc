@@ -4,20 +4,23 @@ function AboutPage() {
   return (
     <main className="content about-page">
       <section className="about-hero">
-        <span className="about-label">About Numy</span>
+        <div className="about-hero-content">
+          <span className="about-label">About Numy Academy</span>
 
-        <h1>Financial planning made simple</h1>
+          <h1>Financial planning made simple</h1>
 
-        <p>
-          Managing a budget can be stressful and confusing — especially for
-          students, beginner entrepreneurs, and people with little financial
-          experience. Numy was created to simplify financial planning through a
-          clear, guided, and accessible experience.
-        </p>
+          <p>
+            Managing a budget can be stressful and confusing...
+          </p>
 
-        <Link to="/calculator" className="start-button">
-          Try calculator
-        </Link>
+          <Link to="/calculator" className="start-button">
+            Try calculator
+          </Link>
+        </div>
+
+        <div className="about-hero-visual">
+          <img src="/icons/logo.png" alt="Numy Academy" />
+        </div>
       </section>
 
       <section className="about-section">

@@ -7,6 +7,12 @@ function HomePage() {
         <div className="home-hero-content">
           <p className="home-label">Numy Academy</p>
 
+          <img
+            src="/icons/logo.png"
+            alt="Numy Academy"
+            className="hero-logo"
+          />
+
           <h1>Financial planning made simple</h1>
 
           <p className="home-description">

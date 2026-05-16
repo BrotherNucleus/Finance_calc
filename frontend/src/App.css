@@ -1,55 +1,49 @@
-/* =========================================================
-   NUMY ACADEMY — GLOBAL DESIGN SYSTEM
-   Palette:
-   Orange:   #f6bbc6
-   Green:  #b4d386
-   Blue:   #6ca3d3
-   Yellow: #fbcb86
-   ========================================================= */
-
 :root {
   /* ===== MAIN BRAND COLORS ===== */
-  --color-blue: #6ca3d3;
-  --color-green: #b4d386;
-  --color-navy: #1d2d5c;
-  --color-yellow: #fbcb86;
+  --color-blue: #a0b5df;
+  --color-green: #104493;
+  --color-navy: #1c2140;
+  --color-yellow: #f1861f;
 
   /* ===== SEMANTIC COLORS ===== */
-  --color-primary: #1d2d5c;
-  --color-secondary: #6ca3d3;
-  --color-accent: #fbcb86;
-  --color-success: #b4d386;
+  --color-primary: #104493;
+  --color-secondary: #a0b5df;
+  --color-accent: #f1861f;
+  --color-success: #104493;
 
   /* ===== BACKGROUNDS ===== */
-  --color-bg: #ffffff;
+  --color-bg: #f8f5ef;
   --color-surface: #ffffff;
-  --color-surface-soft: #f6f8fb;
+  --color-surface-soft: #f6f4ef;
 
   /* ===== TEXT ===== */
-  --color-text: #1d2d5c;
-  --color-muted: #4b5563;
+  --color-text: #1c2140;
+  --color-muted: #104493;
 
   /* ===== BORDERS ===== */
-  --color-border: #d7dde8;
+  --color-border: #a0b5df;
 
   /* ===== STATUS ===== */
-  --color-danger: #c94f5f;
+  --color-danger: #f1861f;
 
   /* ===== BUTTONS ===== */
-  --color-button-primary: #1d2d5c;
-  --color-button-primary-hover: #142040;
+  --color-button-primary: #104493;
+  --color-button-primary-hover: #1c2140;
 
-  --color-button-secondary: #6ca3d3;
-  --color-button-secondary-hover: #4f8fc0;
+  --color-button-secondary: #a0b5df;
+  --color-button-secondary-hover: #104493;
 
-  --color-button-accent: #fbcb86;
-  --color-button-accent-hover: #f2b65f;
+  --color-button-accent: #f1861f;
+  --color-button-accent-hover: #d96f0d;
 
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;
 
-  --shadow-soft: 0 18px 45px rgba(29, 45, 92, 0.12);
+  --shadow-soft: 0 18px 45px rgba(28, 33, 64, 0.12);
+
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Montserrat', sans-serif;
 }
 
 * {
@@ -60,7 +54,9 @@ body {
   margin: 0;
   background: var(--color-bg);
   color: var(--color-text);
+  font-family:var(--font-body);
 }
+
 
 .app {
   min-height: 100vh;
@@ -70,6 +66,19 @@ body {
     var(--color-bg);
 }
 
+h1,h2,h3,h4,h5,h6 {
+  font-weight: 700;
+}
+
+h1,h2,h3,h4,h5,h6,
+.logo-text,.nav-link,
+.button,.primary-button {
+  font-family: var(--font-heading);
+}
+
+button {
+  font-family: inherit;
+}
 /* =========================================================
    NAVIGATION: SIDEBAR BASE / MOBILE
    ========================================================= */
@@ -94,15 +103,16 @@ body {
   margin-bottom: 48px;
 }
 
-.logo-icon {
-  font-size: 34px;
-  color: var(--color-primary);
+.logo-image {
+  height: 52px;
+  width: auto;
+  object-fit: contain;
 }
 
 .logo h2 {
   font-size: 28px;
   line-height: 1.05;
-  color: var(--color-dark);
+  color: var(--color-navy);
   margin: 0;
   font-weight: 800;
 }
@@ -203,11 +213,9 @@ body {
   .logo {
     margin: 0;
   }
-
-  .logo-icon {
-    font-size: 30px;
-  }
-
+.logo-image {
+  height: 78px;
+}
   .logo h2 {
     font-size: 26px;
   }
@@ -312,8 +320,8 @@ body {
     font-size: 24px;
   }
 
-  .logo-icon {
-    font-size: 26px;
+  .logo-image {
+    font-size: px;
   }
 
   .mobile-menu-button,
@@ -429,6 +437,12 @@ body {
   font-weight: 900;
   font-size: 16px;
   margin-bottom: 18px;
+}
+
+.hero-logo {
+  width: 220px;
+  max-width: 100%;
+  margin-bottom: 32px;
 }
 
 .home-hero h1 {
@@ -622,28 +636,64 @@ body {
    ABOUT PAGE
    ========================================================= */
 
-.about-hero {
-  max-width: 900px;
-  margin-bottom: 56px;
+.about-page {
+  width: min(100% - 64px, 1280px);
 }
 
-.about-hero .start-button {
-  display: block;
-  width: fit-content;
-  margin: 0 auto;
+.about-hero {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 72px;
+  align-items: center;
+
+  min-height: calc(100vh - 180px);
+  margin: 0 auto 72px;
+}
+
+.about-hero-content {
+  max-width: 720px;
 }
 
 .about-label {
   display: inline-block;
-  margin-bottom: 16px;
-  color: var(--color-primary-dark);
-  font-weight: 800;
-  font-size: 15px;
+  margin-bottom: 18px;
+  color: var(--color-primary);
+  font-weight: 900;
+  font-size: 16px;
 }
 
-.about-hero p {
-  font-size: 20px;
-  margin-bottom: 32px;
+.about-hero-content h1 {
+  font-size: clamp(54px, 6vw, 86px);
+  line-height: 1.02;
+  margin: 0 0 28px;
+  color: var(--color-navy);
+}
+
+.about-hero-content p {
+  max-width: 680px;
+  font-size: 21px;
+  line-height: 1.65;
+  margin-bottom: 34px;
+  color: var(--color-muted);
+}
+
+.about-hero .start-button {
+  display: inline-flex;
+  width: auto;
+  margin: 0;
+}
+
+.about-hero-visual {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-hero-visual img {
+  width: min(100%, 430px);
+  height: auto;
+  object-fit: contain;
+  transform: translateY(-20px);
 }
 
 .about-section {
@@ -654,6 +704,7 @@ body {
 .about-mission h2 {
   font-size: clamp(28px, 3vw, 38px);
   margin: 0 0 24px;
+  color: var(--color-navy);
 }
 
 .about-grid {
@@ -679,6 +730,7 @@ body {
 .about-card h3 {
   font-size: 21px;
   margin: 0 0 12px;
+  color: var(--color-navy);
 }
 
 .about-card p,
@@ -691,11 +743,24 @@ body {
   padding-left: 20px;
 }
 
+.about-text {
+  max-width: 850px;
+  font-size: 19px;
+  line-height: 1.7;
+  margin-bottom: 28px;
+  color: var(--color-muted);
+}
+
 .about-mission {
-  background: rgba(180, 211, 134, 0.22);
-  border: 1px solid rgba(180, 211, 134, 0.7);
+  background: linear-gradient(
+    135deg,
+    rgba(160, 181, 223, 0.14),
+    rgba(255, 255, 255, 1)
+  );
+  border: 1px solid rgba(160, 181, 223, 0.4);
   border-radius: var(--radius-lg);
   padding: 36px;
+  box-shadow: var(--shadow-soft);
 }
 
 .about-mission p {
@@ -706,12 +771,30 @@ body {
 }
 
 @media (max-width: 1024px) {
+  .about-page {
+    width: min(100% - 36px, 760px);
+  }
+
+  .about-hero {
+    grid-template-columns: 1fr;
+    gap: 36px;
+    min-height: auto;
+  }
+
+  .about-hero-visual {
+    order: -1;
+  }
+
+  .about-hero-visual img {
+    max-width: 260px;
+    transform: none;
+  }
+
   .about-grid,
   .about-two-columns {
     grid-template-columns: 1fr;
   }
 }
-
 /* =========================================================
    CALCULATOR PROGRESS
    ========================================================= */
@@ -1104,27 +1187,29 @@ textarea:focus {
       rgba(108, 163, 211, 0.12),
       rgba(180, 211, 134, 0.18)
     ); */
-  background: var(--color-green);
-  border: 1px solid var(--color-green);
+  background: var(--color-primary);
+  border: 1px solid  var(--radius-lg);
+  box-shadow: var(--shadow-soft);
   /* border: 1px solid rgba(180, 211, 134, 0.8); */
 }
 
 .final-result-box h3 {
-  color: var(--color-text);
+  color: #ffffff;
+  opacity: 0.9;
   margin: 0 0 8px;
 }
 
 .final-result-box p {
   font-size: 38px;
-  font-weight: 900;
-  color: var(--color-success);
+  font-weight: 800;
+  color: #ffffff;
   margin: 0;
 }
 
-.final-result-box h3,
+/* .final-result-box h3,
 .final-result-box p {
   color: var(--color-navy);
-}
+} */
 
 .export-buttons {
   display: flex;
@@ -1147,22 +1232,22 @@ textarea:focus {
 }
 
 .export-pdf {
-  background: var(--color-yellow);
-  color: var(--color-navy);
+  background: var(--color-accent);
+  color: #ffffff;
 }
 
 .export-excel {
-  background: var(--color-green);
-  color: var(--color-navy);
+  background: var(--color-primary);
+  color: #ffffff;
 }
 
 .reset-button {
-  background: var(--color-blue);
+  background: var(--color-secondary);
   color: white;
 }
 
 .reset-button:hover {
-  background: rgba(108, 163, 211, 0.24);
+  background: #104493;
 }
 
 @media (max-width: 900px) {
