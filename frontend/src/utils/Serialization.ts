@@ -29,11 +29,7 @@ export async function saveAsExcel(
 
   const worksheet =
     workbook.addWorksheet("Product_Finance");
-
-  const currency : string = data.currency; 
-
-
-
+ 
   const isProj = (str: string) => str === "project";
   let PoBName : string;
   let PoEName : string;
@@ -70,7 +66,6 @@ export async function saveAsExcel(
   
   const VarTitle = (str : string | number | boolean | undefined |null, str2 : string) => str ? [str2] : [];
   const VarVal = (str : string | number | boolean | undefined | null) => str ? [str] : [];
-  const VarSum = (val : number | undefined) => val ? val : 0;
   const doesExist = (val : number | undefined) => val ? true : false;
 
   const budget = data.budget;
@@ -261,7 +256,7 @@ export async function saveAsPdf(data: any) {
   // Add page
   const page = pdfDoc.addPage([595, 842]); // A4
 
-  const { width , height } = page.getSize();
+  const height = page.getSize().height;
 
   // Load font
   const font = await pdfDoc.embedFont(
