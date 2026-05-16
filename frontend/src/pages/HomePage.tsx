@@ -8,7 +8,7 @@ function HomePage() {
           <p className="home-label">Numy Academy</p>
 
           <img
-            src="/icons/logo.png"
+            src="/logo.png"
             alt="Numy Academy"
             className="hero-logo"
           />

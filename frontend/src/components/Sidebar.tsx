@@ -30,7 +30,7 @@ function Sidebar() {
         <div>
           <div className="logo">
             <img
-              src="/icons/logo2.png"
+              src="/logo2.png"
               alt="Numy Academy"
               className="logo-image"
             />

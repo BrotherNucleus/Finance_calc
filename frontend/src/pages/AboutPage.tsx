@@ -19,7 +19,7 @@ function AboutPage() {
         </div>
 
         <div className="about-hero-visual">
-          <img src="/icons/logo.png" alt="Numy Academy" />
+          <img src="/logo.png" alt="Numy Academy" />
         </div>
       </section>
 
