@@ -12,11 +12,12 @@ export default defineConfig({
       manifest: {
         name: "Numy Academy",
         short_name: "Numy",
-        description:
-          "A simple financial planning app for project and business budgets.",
 
-        theme_color: "#1d2d5c",
-        background_color: "#ffffff",
+        description:
+          "Financial planning application for students and businesses.",
+
+        theme_color: "#1c2140",
+        background_color: "#f8f5ef",
 
         display: "standalone",
         orientation: "portrait",
@@ -28,11 +29,13 @@ export default defineConfig({
             sizes: "192x192",
             type: "image/png",
           },
+
           {
             src: "/icons/icon-512.png",
             sizes: "512x512",
             type: "image/png",
           },
+
           {
             src: "/icons/icon-512-maskable.png",
             sizes: "512x512",
