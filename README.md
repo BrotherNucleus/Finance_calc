@@ -10,7 +10,7 @@ when you have everything you can write npm run dev to run the project
 
 ## What has been done
 
-* Created Home, Calculator and About Us pages with sidebar navigation
+* Created Home, Calculator and About Us pages with sidebar navigation and responsive design
   -> final visual design will be adjusted later after Clementine provides the final  visualizations
 
 * Calculator:
@@ -22,6 +22,11 @@ when you have everything you can write npm run dev to run the project
   * dynamic results
   * project / business split
 
+* Validation:
+  * required inputs
+  * number validation
+  * error messages
+
 * export  and calculations preparation
 
 - `frontend/src/utils/mockCalculations.ts`
@@ -32,17 +37,8 @@ when you have everything you can write npm run dev to run the project
 
 ## Still to do
 
-* Validation:
-
-  * required inputs
-  * min/max length
-  * number validation
-  * error messages
-
 * Visual summaries and charts
   -> after Clementine provides the final visualizations
-
-* Responsive design
 
 * Animations
 

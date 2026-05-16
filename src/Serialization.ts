@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import ExcelJS from "exceljs";
-import { PDFDocument, StandardFonts } from "pdf-lib";
+import { PDFDocument, StandardFonts, rgb } from "pdf-lib";
 import {Firm, Product, Event} from "./types"
 import {FinanceFormData} from "../frontend/src/types/financeTypes"
 import {FinanceResult, calculateFinanceResults} from "../frontend/src/utils/mockCalculations"
@@ -272,6 +272,7 @@ export async function saveAsPdf(data: any) {
   // Create PDF
   const pdfDoc = await PDFDocument.create();
   const financeResult = calculateFinanceResults(data);
+  const dblue =rgb(16/255, 68/255, 147/255);
 
   // Add page
   const page = pdfDoc.addPage([595, 842]); // A4
@@ -288,22 +289,49 @@ export async function saveAsPdf(data: any) {
   );
 
   let y = height - 50;
-
+  const tabStops : number[] = [50, 150, 350, 450];
+  const tabStop1 : number = tabStops[0] ?? 50;
+  const tabStop2 : number = tabStops[1] ?? 50;
+  const tabStop3 : number = tabStops[2] ?? 50;
+  const tabStop4 : number= tabStops[3] ?? 50;
   // Title
-  page.drawText("Project Report", {
-    x: 50,
+  page.drawText("Buisness Report", {
+    x: tabStop1,
     y,
     size: 22,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 40;
 
+  let projectType = data.contextType;
+
+  let ownerName : string;
+
+  if (projectType === "buisness") {
+    ownerName = "Company \ Buisness Name:";
+  } else {
+    ownerName = "Project Name:";
+  }
+
   // General Info
   page.drawText(
-    `Name: ${data.generalInfo.name}`,
+    `${ownerName}`,
     {
-      x: 50,
+      x: tabStop1,
+      y,
+      size: 12,
+      font: bold,
+      color: dblue,
+    }
+  );
+
+  // General Info
+  page.drawText(
+    `${data.generalInfo.name}`,
+    {
+      x: tabStop2,
       y,
       size: 12,
       font,
@@ -313,9 +341,20 @@ export async function saveAsPdf(data: any) {
   y -= 20;
 
   page.drawText(
-    `Type: ${data.generalInfo.type}`,
+    `Type: `,
     {
-      x: 50,
+      x: tabStop1,
+      y,
+      size: 12,
+      font: bold,
+      color: dblue,
+    }
+  );
+
+  page.drawText(
+    `${data.generalInfo.type}`,
+    {
+      x: tabStop2,
       y,
       size: 12,
       font,
@@ -326,9 +365,20 @@ export async function saveAsPdf(data: any) {
 
   if (data.generalInfo.country) {
     page.drawText(
-      `Country: ${data.generalInfo.country}`,
+      `Country: `,
       {
-        x: 50,
+        x: tabStop1,
+        y,
+        size: 12,
+        font: bold,
+        color: dblue,
+      }
+    );
+
+    page.drawText(
+      `${data.generalInfo.country}`,
+      {
+        x: tabStop2,
         y,
         size: 12,
         font,
@@ -361,9 +411,22 @@ export async function saveAsPdf(data: any) {
   }
 
   page.drawText(
-    `Description: \n${warpText(data.generalInfo.description)}`,
+    `Description:`,
     {
-      x: 50,
+      x: tabStop1,
+      y,
+      size: 12,
+      font: bold,
+      color: dblue,
+    }
+  );
+
+  y -= 20;
+
+  page.drawText(
+    `${warpText(data.generalInfo.description)}`,
+    {
+      x: tabStop1,
       y,
       size: 12,
       font,
@@ -377,10 +440,11 @@ export async function saveAsPdf(data: any) {
   y = height - 50;
   // Budget section
   page2.drawText("Budget Information", {
-    x: 50,
+    x: tabStop1,
     y,
     size: 16,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 20;
@@ -396,8 +460,16 @@ export async function saveAsPdf(data: any) {
   ].filter(([_, value]) => value !== undefined);
 
   const listExistingOnPage = (fields : any[][]) => {for (const [label, value] of fields) {
-    page2.drawText(`${label}: ${value}`, {
-      x: 60,
+    page2.drawText(`${label}: `, {
+      x: tabStop1+10,
+      y,
+      size: 12,
+      font: bold,
+      color: dblue,
+    });
+
+    page2.drawText(`${value}`, {
+      x: tabStop2+30,
       y,
       size: 12,
       font,
@@ -413,10 +485,11 @@ export async function saveAsPdf(data: any) {
   y -= 20;
 
   page2.drawText("Costs", {
-    x: 50,
+    x: tabStop1,
     y,
     size: 16,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 20;
@@ -437,10 +510,11 @@ export async function saveAsPdf(data: any) {
 
 
   page2.drawText("Income", {
-    x: 50,
+    x: tabStop1,
     y,
     size: 16,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 20;
@@ -459,10 +533,11 @@ export async function saveAsPdf(data: any) {
   y -= 20;
 
   page2.drawText("Taxes", {
-    x: 50,
+    x: tabStop1,
     y,
     size: 16,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 20;
@@ -475,7 +550,7 @@ export async function saveAsPdf(data: any) {
     ["Percentage Fee", data.taxes.percentageFee],
     ["Support Amount", data.taxes.supportAmount],
     ["Safety Reserve", data.taxes.safetyReserve],
-  ].filter(([_, value]) => value !== undefined || null);
+  ].filter(([_, value]) => value !== undefined || value !== null);
 
   listExistingOnPage(taxFields);
 
@@ -488,10 +563,11 @@ export async function saveAsPdf(data: any) {
   ]
 
   page2.drawText("Total", {
-    x: 50,
+    x: tabStop1,
     y,
     size: 16,
-    font,
+    font: bold,
+    color: dblue,
   });
 
   y -= 14;
@@ -500,11 +576,21 @@ export async function saveAsPdf(data: any) {
 
   y -= 20;
 
-  page2.drawText(`Final Balance: ${financeResult.finalBalance}`, {
-    x: 50,
+  page2.drawText(`Final Balance: `, {
+    x: tabStop1,
     y,
     size: 16,
     font: bold,
+    color: dblue,
+    
+  });
+
+  page2.drawText(`${financeResult.finalBalance}`, {
+    x: tabStop3,
+    y,
+    size: 16,
+    font: bold,
+    color: dblue,
     
   });
   // Save PDF
